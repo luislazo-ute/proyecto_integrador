@@ -1,4 +1,4 @@
-import { IsUUID, IsString, IsNotEmpty, IsNumber, IsIn } from 'class-validator';
+import { IsUUID, IsString, IsNotEmpty, IsNumber, IsIn, IsInt, IsPositive, IsOptional } from 'class-validator';
 
 export class CreateMovimientoDto {
   @IsUUID()
@@ -10,13 +10,15 @@ export class CreateMovimientoDto {
   @IsIn(['entrada', 'salida'])
   tipo_movimiento: 'entrada' | 'salida';
 
-  @IsNumber()
+  @IsInt()
+  @IsPositive()
   cantidad: number;
 
-  @IsString()
-  @IsNotEmpty()
-  id_usuario: string;
+  @IsInt()
+  @IsPositive()
+  id_usuario: number;
 
+  @IsOptional()
   @IsString()
   observacion?: string;
 }

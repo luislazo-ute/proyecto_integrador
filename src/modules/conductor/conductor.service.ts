@@ -4,11 +4,25 @@ import { Repository } from 'typeorm';
 import { Conductor } from './entities/conductor.entity';
 import { CreateConductorDto } from './dto/create-conductor.dto';
 
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { ConductorMongoose, ConductorDocument } from './schemas/conductor.schema';
+
 @Injectable()
 export class ConductorService {
-  constructor(@InjectRepository(Conductor) private repo: Repository<Conductor>) {}
+  constructor(
+    // POSTGRES
+    @InjectRepository(Conductor)
+    private readonly repo: Repository<Conductor>,
 
-  findAll() { return this.repo.find(); }
+    // MONGODB
+    @InjectModel(ConductorMongoose.name)
+    private readonly conductorMongoModel: Model<ConductorDocument>,
+  ) {}
+
+  findAll() {
+    return this.repo.find();
+  }
 
   async findOne(id: string) {
     const c = await this.repo.findOne({ where: { id_conductor: id } });
@@ -16,9 +30,18 @@ export class ConductorService {
     return c;
   }
 
-  create(dto: CreateConductorDto) {
+  async create(dto: CreateConductorDto) {
     const ent = this.repo.create(dto as any);
-    return this.repo.save(ent);
+    const savedConductor = await this.repo.save(ent);
+    await this.conductorMongoModel.create({
+      nombre: dto.nombre,
+      cedula: dto.cedula,
+      telefono: dto.telefono,
+      licencia: dto.licencia,
+      estado: dto.estado ?? true,
+    });
+
+    return savedConductor;
   }
 
   async update(id: string, dto: Partial<CreateConductorDto>) {

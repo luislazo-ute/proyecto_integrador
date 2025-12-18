@@ -11,14 +11,14 @@ export class MovimientoInventario {
   @JoinColumn({ name: 'id_producto' })
   producto: Producto;
 
-  @Column()
+  @Column({ type: 'uuid' })
   id_producto: string;
 
   @ManyToOne(() => Bodega, { eager: true })
   @JoinColumn({ name: 'id_bodega' })
   bodega: Bodega;
 
-  @Column()
+  @Column({ type: 'uuid' })
   id_bodega: string;
 
   @Column({ length: 20 })
@@ -33,6 +33,6 @@ export class MovimientoInventario {
   @Column({ type: 'text', nullable: true })
   observacion: string | null;
 
-  @Column({ type: 'uuid' })
-  id_usuario: string; // viene de Mongo
+  @Column({ type: 'int' })
+  id_usuario: number;
 }
