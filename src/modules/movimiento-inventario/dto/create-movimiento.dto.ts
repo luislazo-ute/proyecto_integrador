@@ -13,7 +13,7 @@ export class CreateMovimientoDto {
   @IsNumber()
   cantidad: number;
 
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   id_usuario: string;
 

@@ -7,4 +7,5 @@ export class CreateRutaDto {
   @IsOptional() @IsDateString() fecha_llegada?: string;
   @IsOptional() @IsUUID() id_transporte?: string;
   @IsOptional() @IsUUID() id_conductor?: string;
+  @IsOptional() @IsUUID() id_usuario_encargado?: string;
 }

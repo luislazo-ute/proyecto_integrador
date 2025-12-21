@@ -6,9 +6,13 @@ import { CreateConductorDto } from './dto/create-conductor.dto';
 
 @Injectable()
 export class ConductorService {
-  constructor(@InjectRepository(Conductor) private repo: Repository<Conductor>) {}
+  constructor(
+    @InjectRepository(Conductor) private repo: Repository<Conductor>,
+  ) {}
 
-  findAll() { return this.repo.find(); }
+  findAll() {
+    return this.repo.find();
+  }
 
   async findOne(id: string) {
     const c = await this.repo.findOne({ where: { id_conductor: id } });
@@ -17,7 +21,7 @@ export class ConductorService {
   }
 
   create(dto: CreateConductorDto) {
-    const ent = this.repo.create(dto as any);
+    const ent = this.repo.create(dto);
     return this.repo.save(ent);
   }
 

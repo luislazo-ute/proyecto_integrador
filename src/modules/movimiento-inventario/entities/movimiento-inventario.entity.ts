@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Producto } from 'src/modules/producto/entities/producto.entity';
 import { Bodega } from 'src/modules/bodega/entities/bodega.entity';
 
@@ -34,5 +40,5 @@ export class MovimientoInventario {
   observacion: string | null;
 
   @Column({ type: 'uuid' })
-  id_usuario: string; // viene de Mongo
+  id_usuario: string; // UUID del usuario de Mongo
 }

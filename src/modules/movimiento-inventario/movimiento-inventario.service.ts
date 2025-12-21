@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MovimientoInventario } from './entities/movimiento-inventario.entity';
@@ -20,16 +24,21 @@ export class MovimientoInventarioService {
   ) {}
 
   async create(dto: CreateMovimientoDto) {
-    const producto = await this.productoRepo.findOne({ where: { id_producto: dto.id_producto } });
+    const producto = await this.productoRepo.findOne({
+      where: { id_producto: dto.id_producto },
+    });
 
     if (!producto) throw new NotFoundException('Producto no encontrado');
 
-    // Validar stock si es salida
-    if (dto.tipo_movimiento === 'salida' && producto.stock_actual < dto.cantidad) {
-      throw new BadRequestException('Stock insuficiente para realizar la salida');
+    if (
+      dto.tipo_movimiento === 'salida' &&
+      producto.stock_actual < dto.cantidad
+    ) {
+      throw new BadRequestException(
+        'Stock insuficiente para realizar la salida',
+      );
     }
 
-    // Actualizar stock
     producto.stock_actual =
       dto.tipo_movimiento === 'entrada'
         ? producto.stock_actual + dto.cantidad
@@ -43,7 +52,6 @@ export class MovimientoInventarioService {
     });
     const movimientoGuardado = await this.movimientoRepo.save(movimiento);
 
-    // Crear Kardex
     const kardex = this.kardexRepo.create({
       id_producto: dto.id_producto,
       fecha: new Date(),

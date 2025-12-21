@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { RutaEntrega } from 'src/modules/ruta-entrega/entities/ruta-entrega.entity';
 import { Transporte } from 'src/modules/transporte/entities/transporte.entity';
 import { Conductor } from 'src/modules/conductor/entities/conductor.entity';
@@ -51,12 +58,15 @@ export class GuiaRemision {
   @Column()
   id_conductor: string;
 
+  @Column({ type: 'uuid', nullable: true })
+  id_usuario_encargado: string | null;
+
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   peso_total: number;
 
   @Column({ length: 20, default: 'emitida' })
   estado: string; // emitida, en transito, finalizada
 
-  @OneToMany(() => DetalleGuiaRemision, d => d.guia, { cascade: true })
+  @OneToMany(() => DetalleGuiaRemision, (d) => d.guia, { cascade: true })
   detalles: DetalleGuiaRemision[];
 }

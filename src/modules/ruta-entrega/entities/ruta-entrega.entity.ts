@@ -1,6 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
-import { Transporte } from '../../transporte/entities/transporte.entity';
-import { Conductor } from '../../conductor/entities/conductor.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { DetalleRuta } from './detalle-ruta.entity';
 
 @Entity('ruta_entrega')
@@ -32,6 +30,9 @@ export class RutaEntrega {
   @Column({ type: 'uuid', nullable: true })
   id_conductor: string | null;
 
-  @OneToMany(() => DetalleRuta, d => d.ruta, { cascade: true })
+  @Column({ type: 'uuid', nullable: true })
+  id_usuario_encargado: string | null;
+
+  @OneToMany(() => DetalleRuta, (d) => d.ruta, { cascade: true })
   detalles: DetalleRuta[];
 }

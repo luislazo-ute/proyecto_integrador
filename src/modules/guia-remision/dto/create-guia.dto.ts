@@ -1,9 +1,10 @@
-import { IsUUID, IsString, IsNotEmpty } from 'class-validator';
+import { IsUUID, IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateGuiaDto {
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  numero_guia: string;
+  numero_guia?: string;
 
   @IsUUID()
   id_ruta: string;
@@ -13,6 +14,9 @@ export class CreateGuiaDto {
 
   @IsUUID()
   id_conductor: string;
+
+  @IsUUID()
+  id_usuario_encargado: string;
 
   @IsString()
   punto_partida: string;

@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Producto } from 'src/modules/producto/entities/producto.entity';
 import { MovimientoInventario } from 'src/modules/movimiento-inventario/entities/movimiento-inventario.entity';
 

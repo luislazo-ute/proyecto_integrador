@@ -11,5 +11,5 @@ export class CreateBodegaDto {
 
   @IsOptional()
   @IsUUID()
-  responsable?: string; // id del usuario, opcional
+  responsable?: string;
 }

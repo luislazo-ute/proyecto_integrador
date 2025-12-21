@@ -12,8 +12,8 @@ export class Transporte {
   tipo_vehiculo: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
-  capacidad: number; // kg
+  capacidad: number;
 
   @Column({ length: 20, default: 'disponible' })
-  estado: string; // disponible, en ruta, mantenimiento
+  estado: string;
 }

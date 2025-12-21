@@ -8,8 +8,8 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   port: parseInt(process.env.DB_PORT || '5432'),
   username: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASS || '',
-  database: process.env.DB_NAME || 'computecdb',
+  database: process.env.DB_NAME || 'computec_backend_nuevo',
   autoLoadEntities: true,
-  synchronize: (process.env.TYPEORM_SYNCHRONIZE === 'true'),
+  synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true',
   logging: false,
 };

@@ -11,7 +11,9 @@ export class TransporteService {
     private repo: Repository<Transporte>,
   ) {}
 
-  findAll() { return this.repo.find(); }
+  findAll() {
+    return this.repo.find();
+  }
 
   async findOne(id: string) {
     const t = await this.repo.findOne({ where: { id_transporte: id } });
@@ -20,7 +22,7 @@ export class TransporteService {
   }
 
   create(dto: CreateTransporteDto) {
-    const ent = this.repo.create(dto as any);
+    const ent = this.repo.create(dto);
     return this.repo.save(ent);
   }
 
@@ -40,6 +42,5 @@ export class TransporteService {
     const t = await this.findOne(id);
     t.estado = estado;
     return this.repo.save(t);
- }
- 
+  }
 }

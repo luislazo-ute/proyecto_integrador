@@ -17,7 +17,9 @@ export class CategoriaService {
   }
 
   async findOne(id: string) {
-    const categoria = await this.categoriaRepository.findOne({ where: { id_categoria: id } });
+    const categoria = await this.categoriaRepository.findOne({
+      where: { id_categoria: id },
+    });
 
     if (!categoria) {
       throw new NotFoundException(`La categoría con id ${id} no existe.`);

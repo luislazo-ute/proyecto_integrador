@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Categoria } from 'src/modules/categoria/entities/categoria.entity';
 
 @Entity('producto')
@@ -6,7 +12,9 @@ export class Producto {
   @PrimaryGeneratedColumn('uuid')
   id_producto: string;
 
-  @ManyToOne(() => Categoria, (categoria) => categoria.id_categoria, { eager: true })
+  @ManyToOne(() => Categoria, (categoria) => categoria.id_categoria, {
+    eager: true,
+  })
   @JoinColumn({ name: 'id_categoria' })
   categoria: Categoria;
 

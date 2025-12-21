@@ -7,6 +7,7 @@ import { GuiaRemisionController } from './guia-remision.controller';
 import { Producto } from '../producto/entities/producto.entity';
 import { RutaEntrega } from '../ruta-entrega/entities/ruta-entrega.entity';
 import { Transporte } from '../transporte/entities/transporte.entity';
+import { Conductor } from '../conductor/entities/conductor.entity';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { Transporte } from '../transporte/entities/transporte.entity';
       Producto,
       RutaEntrega,
       Transporte,
+      Conductor,
     ]),
   ],
   controllers: [GuiaRemisionController],

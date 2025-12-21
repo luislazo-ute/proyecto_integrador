@@ -8,7 +8,9 @@ import { Producto } from '../producto/entities/producto.entity';
 import { Transporte } from '../transporte/entities/transporte.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([RutaEntrega, DetalleRuta, Producto, Transporte])],
+  imports: [
+    TypeOrmModule.forFeature([RutaEntrega, DetalleRuta, Producto, Transporte]),
+  ],
   providers: [RutaEntregaService],
   controllers: [RutaEntregaController],
 })

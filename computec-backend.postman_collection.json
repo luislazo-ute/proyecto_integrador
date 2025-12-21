@@ -1,0 +1,313 @@
+{
+  "info": {
+    "_postman_id": "computec-backend-collection-uuid",
+    "name": "COMPUTEC_BACKEND API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"mayra\",\n  \"password\": \"123456\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth", "login"] }
+      }
+    },
+    {
+      "name": "Roles - Crear",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"admin\",\n  \"descripcion\": \"Administrador\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/rol", "host": ["{{base_url}}"], "path": ["rol"] }
+      }
+    },
+    {
+      "name": "Usuarios - Crear",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Mayra\",\n  \"username\": \"mayra\",\n  \"password\": \"123456\",\n  \"email\": \"mayra@email.com\",\n  \"telefono\": \"0999999999\",\n  \"id_rol\": \"{{uuid_rol}}\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/usuario", "host": ["{{base_url}}"], "path": ["usuario"] }
+      }
+    },
+    {
+      "name": "Usuarios - Actualizar",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Mayra Actualizada\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/usuario/{{uuid_usuario}}", "host": ["{{base_url}}"], "path": ["usuario", "{{uuid_usuario}}"] }
+      }
+    },
+    {
+      "name": "Usuarios - Eliminar",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/usuario/{{uuid_usuario}}", "host": ["{{base_url}}"], "path": ["usuario", "{{uuid_usuario}}"] }
+      }
+    },
+    {
+      "name": "Bodega - Crear",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Bodega Central\",\n  \"ubicacion\": \"Quito\",\n  \"responsable\": \"{{uuid_usuario}}\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/bodega", "host": ["{{base_url}}"], "path": ["bodega"] }
+      }
+    },
+    {
+      "name": "Producto - Listar",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/producto", "host": ["{{base_url}}"], "path": ["producto"] }
+      }
+    },
+    {
+      "name": "Producto - Obtener",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/producto/{{uuid_producto}}", "host": ["{{base_url}}"], "path": ["producto", "{{uuid_producto}}"] }
+      }
+    },
+    {
+      "name": "Producto - Crear",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "id_categoria", "value": "{{uuid_categoria}}", "type": "text" },
+            { "key": "codigo", "value": "P001", "type": "text" },
+            { "key": "nombre", "value": "Laptop", "type": "text" },
+            { "key": "descripcion", "value": "Laptop de alta gama", "type": "text" },
+            { "key": "precio_compra", "value": "1000", "type": "text" },
+            { "key": "precio_venta", "value": "1200", "type": "text" },
+            { "key": "stock_actual", "value": "10", "type": "text" },
+            { "key": "peso", "value": "2.5", "type": "text" },
+            { "key": "tipo_unidad", "value": "unidad", "type": "text" },
+            { "key": "unidad_embalaje", "value": "x1", "type": "text" },
+            { "key": "estado", "value": "true", "type": "text" },
+            { "key": "imagen", "type": "file", "src": "" }
+          ]
+        },
+        "url": { "raw": "{{base_url}}/producto", "host": ["{{base_url}}"], "path": ["producto"] }
+      }
+    },
+    {
+      "name": "Producto - Actualizar",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "nombre", "value": "Laptop Pro", "type": "text" },
+            { "key": "precio_venta", "value": "1300", "type": "text" },
+            { "key": "imagen", "type": "file", "src": "" }
+          ]
+        },
+        "url": { "raw": "{{base_url}}/producto/{{uuid_producto}}", "host": ["{{base_url}}"], "path": ["producto", "{{uuid_producto}}"] }
+      }
+    },
+    {
+      "name": "Producto - Eliminar",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/producto/{{uuid_producto}}", "host": ["{{base_url}}"], "path": ["producto", "{{uuid_producto}}"] }
+      }
+    },
+    {
+      "name": "Movimiento Inventario - Crear",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id_producto\": \"{{uuid_producto}}\",\n  \"id_bodega\": \"{{uuid_bodega}}\",\n  \"tipo_movimiento\": \"entrada\",\n  \"cantidad\": 5,\n  \"id_usuario\": \"{{uuid_usuario}}\",\n  \"observacion\": \"Ingreso inicial\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/movimiento-inventario", "host": ["{{base_url}}"], "path": ["movimiento-inventario"] }
+      }
+    },
+    {
+      "name": "Kardex - Listar",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/kardex", "host": ["{{base_url}}"], "path": ["kardex"] }
+      }
+    },
+    {
+      "name": "Kardex - Por producto",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/kardex?id_producto={{uuid_producto}}",
+          "host": ["{{base_url}}"],
+          "path": ["kardex"],
+          "query": [
+            { "key": "id_producto", "value": "{{uuid_producto}}" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Kardex - Por rango fechas",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/kardex?fecha_inicio=2025-12-01&fecha_fin=2025-12-31",
+          "host": ["{{base_url}}"],
+          "path": ["kardex"],
+          "query": [
+            { "key": "fecha_inicio", "value": "2025-12-01" },
+            { "key": "fecha_fin", "value": "2025-12-31" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Guía Remisión - Crear",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id_ruta\": \"{{uuid_ruta}}\",\n  \"id_transporte\": \"{{uuid_transporte}}\",\n  \"id_conductor\": \"{{uuid_conductor}}\",\n  \"id_usuario_encargado\": \"{{uuid_usuario_encargado}}\",\n  \"punto_partida\": \"Bodega Central\",\n  \"punto_llegada\": \"Cliente\",\n  \"motivo_traslado\": \"Entrega\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/guia-remision", "host": ["{{base_url}}"], "path": ["guia-remision"] }
+      }
+    },
+    {
+      "name": "Guía Remisión - Agregar detalle",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id_guia\": \"{{uuid_guia}}\",\n  \"id_producto\": \"{{uuid_producto}}\",\n  \"cantidad\": 1\n}"
+        },
+        "url": { "raw": "{{base_url}}/guia-remision/detalle", "host": ["{{base_url}}"], "path": ["guia-remision", "detalle"] }
+      }
+    },
+    {
+      "name": "Guía Remisión - Enviar",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/guia-remision/{{uuid_guia}}/enviar", "host": ["{{base_url}}"], "path": ["guia-remision", "{{uuid_guia}}", "enviar"] }
+      }
+    },
+    {
+      "name": "Guía Remisión - Finalizar",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/guia-remision/{{uuid_guia}}/finalizar", "host": ["{{base_url}}"], "path": ["guia-remision", "{{uuid_guia}}", "finalizar"] }
+      }
+    },
+    {
+      "name": "Guía Remisión - Listar",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/guia-remision", "host": ["{{base_url}}"], "path": ["guia-remision"] }
+      }
+    },
+    {
+      "name": "Guía Remisión - Obtener",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/guia-remision/{{uuid_guia}}", "host": ["{{base_url}}"], "path": ["guia-remision", "{{uuid_guia}}"] }
+      }
+    }
+    
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000" },
+    { "key": "access_token", "value": "" },
+    { "key": "uuid_rol", "value": "" },
+    { "key": "uuid_usuario", "value": "" },
+    { "key": "uuid_categoria", "value": "" },
+    { "key": "uuid_producto", "value": "" },
+    { "key": "uuid_bodega", "value": "" },
+    { "key": "uuid_ruta", "value": "" },
+    { "key": "uuid_transporte", "value": "" },
+    { "key": "uuid_conductor", "value": "" },
+    { "key": "uuid_usuario_encargado", "value": "" },
+    { "key": "uuid_guia", "value": "" }
+  ]
+}

@@ -11,7 +11,6 @@ export class Bodega {
   @Column({ length: 150 })
   ubicacion: string;
 
-  // Usuarios vienen de Mongo → guardamos solo el ID
   @Column({ type: 'uuid', nullable: true })
-  responsable: string;
+  responsable: string | null; // UUID del usuario de MongoDB
 }

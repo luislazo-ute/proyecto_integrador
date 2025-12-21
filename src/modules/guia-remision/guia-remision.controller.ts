@@ -1,8 +1,19 @@
-import { Controller, Get, Post, Put, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Body,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
 import { GuiaRemisionService } from './guia-remision.service';
 import { CreateGuiaDto } from './dto/create-guia.dto';
 import { AddDetalleGuiaDto } from './dto/add-detalle-guia.dto';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('guia-remision')
 export class GuiaRemisionController {
   constructor(private readonly svc: GuiaRemisionService) {}

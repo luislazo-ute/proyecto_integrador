@@ -6,6 +6,7 @@ import {
   IsBoolean,
   IsOptional,
 } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 
 export class CreateProductoDto {
   @IsUUID()
@@ -25,15 +26,19 @@ export class CreateProductoDto {
   descripcion?: string;
 
   @IsNumber()
+  @Type(() => Number)
   precio_compra: number;
 
   @IsNumber()
+  @Type(() => Number)
   precio_venta: number;
 
   @IsNumber()
+  @Type(() => Number)
   stock_actual: number;
 
   @IsNumber()
+  @Type(() => Number)
   peso: number;
 
   @IsString()
@@ -44,5 +49,14 @@ export class CreateProductoDto {
 
   @IsBoolean()
   @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'string') {
+      const normalized = value.trim().toLowerCase();
+      if (normalized === 'true') return true;
+      if (normalized === 'false') return false;
+    }
+    return undefined;
+  })
   estado?: boolean;
 }
