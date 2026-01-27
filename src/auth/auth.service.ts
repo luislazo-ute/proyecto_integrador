@@ -1,9 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UsuarioService } from '../modules/usuario/usuario.service';
-
-type RolLike = { nombre: string };
+import { UsuarioService } from 'src/modules/usuario/usuario.service';
 
 @Injectable()
 export class AuthService {
@@ -19,23 +17,19 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales incorrectas');
     }
 
-    const rolNombre = (() => {
-      const idRol = user.id_rol;
-      if (typeof idRol === 'string') return idRol;
-      if (idRol && typeof idRol === 'object' && 'nombre' in idRol) {
-        return (idRol as RolLike).nombre;
-      }
-      return null;
-    })();
+    const userId =
+      (user as any)?._id ??
+      (user as any)?.id ??
+      (user as any)?.userId ??
+      (user as any)?.username;
 
     const payload = {
-      sub: user._id,
+      sub: String(userId),
       username: user.username,
-      rol: rolNombre,
+      rol: (user as any).id_rol?.nombre ?? null,   // ✅ ya viene por populate
+      id_bodega: (user as any).id_bodega ?? null, // ✅ para default en front
     };
 
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    return { access_token: this.jwtService.sign(payload) };
   }
 }

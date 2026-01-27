@@ -14,35 +14,48 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { ParseIdPipe } from '../../common/pipes/parse-id.pipe';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('ADMIN')
 @Controller('usuario')
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
+  // ✅ IMPORTANTE: ANTES que ":id"
+  @Roles('ADMIN', 'BODEGA')
+  @Get('responsables')
+  responsables() {
+    return this.usuarioService.listResponsables();
+  }
+
+  @Roles('ADMIN')
   @Post()
   create(@Body() dto: CreateUsuarioDto) {
     return this.usuarioService.create(dto);
   }
 
+  @Roles('ADMIN')
   @Get()
   findAll() {
     return this.usuarioService.findAll();
   }
 
+  // ✅ SIN regex (evita crash)
+  @Roles('ADMIN')
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIdPipe) id: string) {
     return this.usuarioService.findOne(id);
   }
 
+  @Roles('ADMIN')
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateUsuarioDto) {
+  update(@Param('id', ParseIdPipe) id: string, @Body() dto: UpdateUsuarioDto) {
     return this.usuarioService.update(id, dto);
   }
 
+  @Roles('ADMIN')
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIdPipe) id: string) {
     return this.usuarioService.remove(id);
   }
 }

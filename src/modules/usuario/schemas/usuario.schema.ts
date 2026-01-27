@@ -19,16 +19,21 @@ export class Usuario {
   password: string;
 
   @Prop()
-  email: string;
+  email?: string;
 
   @Prop()
-  telefono: string;
+  telefono?: string;
+
+  // ✅ TU ROL ES UUID STRING (no ObjectId)
+  @Prop({ type: String, ref: 'Rol', required: true })
+  id_rol: string;
 
   @Prop({ default: true })
   estado: boolean;
 
-  @Prop({ type: String, ref: 'Rol', required: true })
-  id_rol: string;
+  // ✅ NUEVO: bodega asignada al usuario (UUID de Postgres)
+  @Prop({ type: String, required: false, default: null })
+  id_bodega?: string | null;
 }
 
 export const UsuarioSchema = SchemaFactory.createForClass(Usuario);

@@ -5,6 +5,9 @@ export class Conductor {
   @PrimaryGeneratedColumn('uuid')
   id_conductor: string;
 
+  @Column({ type: 'int', unique: true, nullable: true })
+  numero: number | null;
+
   @Column({ length: 100 })
   nombre: string;
 

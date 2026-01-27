@@ -1,13 +1,33 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { MovimientoInventarioService } from './movimiento-inventario.service';
 import { MovimientoInventarioController } from './movimiento-inventario.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { MovimientoInventario } from './entities/movimiento-inventario.entity';
-import { Producto } from '../producto/entities/producto.entity';
-import { Kardex } from '../kardex/entities/kardex.entity';
+
+import { Movimiento } from './entities/movimiento.entity';
+import { MovimientoDetalle } from './entities/movimiento-detalle.entity';
+
+import { StockBodega } from 'src/modules/stock-bodega/entities/stock-bodega.entity';
+import { Producto } from 'src/modules/producto/entities/producto.entity';
+import { Bodega } from 'src/modules/bodega/entities/bodega.entity';
+import { Kardex } from 'src/modules/kardex/entities/kardex.entity';
+
+import { UsuarioModule } from 'src/modules/usuario/usuario.module';
+import { MovimientoSeq } from './entities/movimiento_seq.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MovimientoInventario, Producto, Kardex])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Movimiento,
+      MovimientoDetalle,
+      MovimientoSeq,
+      StockBodega,
+      Producto,
+      Bodega,
+      Kardex,
+    ]),
+    UsuarioModule, // ✅ para usar UsuarioService
+  ],
   controllers: [MovimientoInventarioController],
   providers: [MovimientoInventarioService],
 })

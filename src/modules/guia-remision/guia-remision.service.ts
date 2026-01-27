@@ -9,6 +9,7 @@ import { GuiaRemision } from './entities/guia-remision.entity';
 import { DetalleGuiaRemision } from './entities/detalle-guia.entity';
 import { CreateGuiaDto } from './dto/create-guia.dto';
 import { AddDetalleGuiaDto } from './dto/add-detalle-guia.dto';
+import { FilterGuiaDto } from './dto/filter-guia.dto';
 import { Producto } from 'src/modules/producto/entities/producto.entity';
 import { RutaEntrega } from 'src/modules/ruta-entrega/entities/ruta-entrega.entity';
 import { Transporte } from 'src/modules/transporte/entities/transporte.entity';
@@ -198,14 +199,38 @@ export class GuiaRemisionService {
     return this.guiaRepo.save(guia);
   }
 
-  findAll() {
-    return this.guiaRepo.find({ relations: ['detalles'] });
+  findAll(filter?: FilterGuiaDto) {
+    const qb = this.guiaRepo
+      .createQueryBuilder('g')
+      .leftJoinAndSelect('g.detalles', 'd')
+      .leftJoinAndSelect('d.producto', 'p')
+      // ruta/transporte/conductor son eager, no hace falta join
+      .orderBy('g.fecha_emision', 'DESC');
+
+    const numero = filter?.numero?.trim();
+    if (numero) {
+      qb.andWhere('LOWER(g.numero_guia) LIKE :numero', { numero: `%${numero.toLowerCase()}%` });
+    }
+
+    if (filter?.estado) {
+      qb.andWhere('g.estado = :estado', { estado: filter.estado });
+    }
+
+    if (filter?.fecha_inicio) {
+      qb.andWhere('g.fecha_emision >= :fecha_inicio', { fecha_inicio: new Date(filter.fecha_inicio) });
+    }
+
+    if (filter?.fecha_fin) {
+      qb.andWhere('g.fecha_emision <= :fecha_fin', { fecha_fin: new Date(filter.fecha_fin) });
+    }
+
+    return qb.getMany();
   }
 
   findOne(id: string) {
     return this.guiaRepo.findOne({
       where: { id_guia: id },
-      relations: ['detalles'],
+      relations: ['detalles', 'detalles.producto'],
     });
   }
 }

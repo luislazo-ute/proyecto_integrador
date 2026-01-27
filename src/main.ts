@@ -4,11 +4,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { GlobalHttpExceptionFilter } from './common/filters/http-exception.filter';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
-import * as dotenv from 'dotenv';
 
 async function bootstrap() {
-  dotenv.config();
-
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors();

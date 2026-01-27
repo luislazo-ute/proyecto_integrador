@@ -1,5 +1,4 @@
-import { Type } from 'class-transformer';
-import { IsDate, IsOptional, IsUUID } from 'class-validator';
+import { IsDateString, IsIn, IsOptional, IsUUID } from 'class-validator';
 
 export class FilterKardexDto {
   @IsOptional()
@@ -7,12 +6,18 @@ export class FilterKardexDto {
   id_producto?: string;
 
   @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  fecha_inicio?: Date;
+  @IsUUID()
+  id_bodega?: string;
 
   @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  fecha_fin?: Date;
+  @IsIn(['entrada', 'salida'])
+  tipo?: 'entrada' | 'salida';
+
+  @IsOptional()
+  @IsDateString()
+  fecha_inicio?: string;
+
+  @IsOptional()
+  @IsDateString()
+  fecha_fin?: string;
 }

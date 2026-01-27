@@ -1,12 +1,6 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Producto } from 'src/modules/producto/entities/producto.entity';
-import { MovimientoInventario } from 'src/modules/movimiento-inventario/entities/movimiento-inventario.entity';
+import { Movimiento } from 'src/modules/movimiento-inventario/entities/movimiento.entity';
 
 @Entity('kardex')
 export class Kardex {
@@ -17,8 +11,14 @@ export class Kardex {
   @JoinColumn({ name: 'id_producto' })
   producto: Producto;
 
-  @Column()
+  @Column({ type: 'uuid' })
   id_producto: string;
+
+  @Column({ type: 'uuid' })
+  id_bodega: string;
+
+  @Column({ type: 'uuid' })
+  id_usuario: string;
 
   @Column({ type: 'timestamp' })
   fecha: Date;
@@ -35,10 +35,10 @@ export class Kardex {
   @Column({ type: 'text', nullable: true })
   descripcion: string | null;
 
-  @ManyToOne(() => MovimientoInventario, { eager: true })
+  @ManyToOne(() => Movimiento, { eager: true })
   @JoinColumn({ name: 'id_movimiento' })
-  movimiento: MovimientoInventario;
+  movimiento: Movimiento;
 
-  @Column()
+  @Column({ type: 'uuid' })
   id_movimiento: string;
 }

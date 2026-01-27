@@ -5,11 +5,13 @@ import {
   Put,
   Body,
   Param,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { GuiaRemisionService } from './guia-remision.service';
 import { CreateGuiaDto } from './dto/create-guia.dto';
 import { AddDetalleGuiaDto } from './dto/add-detalle-guia.dto';
+import { FilterGuiaDto } from './dto/filter-guia.dto';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 
@@ -39,8 +41,8 @@ export class GuiaRemisionController {
   }
 
   @Get()
-  list() {
-    return this.svc.findAll();
+  list(@Query() filter: FilterGuiaDto) {
+    return this.svc.findAll(filter);
   }
 
   @Get(':id')

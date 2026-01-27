@@ -18,6 +18,9 @@ import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { Req } from '@nestjs/common';
+import type { Request } from 'express';
+
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('producto')
@@ -47,11 +50,14 @@ export class ProductoController {
     }),
   )
   create(
+    @Req() req: Request,
     @Body() dto: CreateProductoDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.productoService.create(dto, file?.path);
+    const userId = (req as any).user?.sub; // JWT payload: sub
+    return this.productoService.create(dto, file?.path, userId);
   }
+
 
   @Put(':id')
   @UseInterceptors(

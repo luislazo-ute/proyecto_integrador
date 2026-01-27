@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsBoolean,
   IsOptional,
+  Min,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
@@ -13,9 +14,7 @@ export class CreateProductoDto {
   @IsNotEmpty()
   id_categoria: string;
 
-  @IsString()
-  @IsNotEmpty()
-  codigo: string;
+  // ✅ ya NO se recibe codigo: lo genera el backend
 
   @IsString()
   @IsNotEmpty()
@@ -27,18 +26,22 @@ export class CreateProductoDto {
 
   @IsNumber()
   @Type(() => Number)
+  @Min(0)
   precio_compra: number;
 
   @IsNumber()
   @Type(() => Number)
+  @Min(0)
   precio_venta: number;
 
   @IsNumber()
   @Type(() => Number)
+  @Min(0)
   stock_actual: number;
 
   @IsNumber()
   @Type(() => Number)
+  @Min(0)
   peso: number;
 
   @IsString()

@@ -6,6 +6,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { GuiaRemision } from './guia-remision.entity';
+import { Producto } from 'src/modules/producto/entities/producto.entity';
 
 @Entity('detalle_guia_remision')
 export class DetalleGuiaRemision {
@@ -21,8 +22,14 @@ export class DetalleGuiaRemision {
   @Column()
   id_guia: string;
 
-  @Column()
-  id_producto: string;
+  // NOTA: existe data legacy con NULL (antes no se enviaba producto).
+  // Lo dejamos nullable para que synchronize no falle.
+  @Column({ nullable: true })
+  id_producto: string | null;
+
+  @ManyToOne(() => Producto, { eager: true, nullable: true })
+  @JoinColumn({ name: 'id_producto' })
+  producto: Producto | null;
 
   @Column('int')
   cantidad: number;

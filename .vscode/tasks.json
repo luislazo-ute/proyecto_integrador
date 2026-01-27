@@ -1,0 +1,317 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "E2E verify bodega create payload",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$ErrorActionPreference='Continue'; $base='http://127.0.0.1:3000'; $loginBody=@{username='admin';password='admin123'}|ConvertTo-Json; $loginResp=Invoke-RestMethod -Method Post -Uri ($base+'/auth/login') -ContentType 'application/json' -Body $loginBody; $token=$loginResp.access_token; if(-not $token){ Write-Host 'LOGIN FAILED: no token'; exit 1 }; $headers=@{ Authorization=('Bearer '+$token) }; $stamp=[DateTimeOffset]::UtcNow.ToUnixTimeSeconds(); function TryCreate([string]$label, $bodyObj){ try { $body=$bodyObj|ConvertTo-Json; $r=Invoke-RestMethod -Method Post -Uri ($base+'/bodega') -Headers $headers -ContentType 'application/json' -Body $body; return @{ ok=$true; id=$r.id_bodega; err=$null } } catch { $msg=$_.Exception.Message; try { $resp=$_.Exception.Response; if($resp){ $sr = New-Object System.IO.StreamReader($resp.GetResponseStream()); $msg = $sr.ReadToEnd() } } catch {} return @{ ok=$false; id=$null; err=$msg } } }; $rOmit=TryCreate 'omit' @{ nombre=('Bodega API Omit '+$stamp); ubicacion='API-Test' }; $rNull=TryCreate 'null' @{ nombre=('Bodega API Null '+$stamp); ubicacion='API-Test'; responsable=$null }; $rEmpty=TryCreate 'empty' @{ nombre=('Bodega API Empty '+$stamp); ubicacion='API-Test'; responsable='' }; $users=$null; try{ $users=Invoke-RestMethod -Method Get -Uri ($base+'/usuario/responsables') -Headers $headers } catch {} $firstId=$null; if($users -is [System.Array] -and $users.Length -gt 0){ $firstId=$users[0]._id } $rWith=$null; if($firstId){ $rWith=TryCreate 'with' @{ nombre=('Bodega API With '+$stamp); ubicacion='API-Test'; responsable=$firstId } } [PSCustomObject]@{ loginUser=$loginResp.user.username; omitOk=$rOmit.ok; omitId=$rOmit.id; nullOk=$rNull.ok; nullId=$rNull.id; emptyOk=$rEmpty.ok; emptyErr=$rEmpty.err; firstResponsableId=$firstId; withOk=$rWith.ok; withId=$rWith.id; withErr=$rWith.err } | Format-List; if(-not $rOmit.ok -or -not $rNull.ok){ exit 1 }"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Check Vite reachable",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"try { (Invoke-WebRequest -Uri 'http://127.0.0.1:5173/' -UseBasicParsing -TimeoutSec 3).StatusCode } catch { 'NOT_LISTENING' }"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Check Vite reachable",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"try { (Invoke-WebRequest -Uri 'http://127.0.0.1:5173/' -UseBasicParsing -TimeoutSec 3).StatusCode } catch { Write-Output 'NOT_LISTENING' }"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Check Vite reachable 2",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"try { (Invoke-WebRequest -Uri 'http://127.0.0.1:5173/' -UseBasicParsing -TimeoutSec 3).StatusCode } catch { Write-Output 'NOT_LISTENING' }"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Check port 5173 listen",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$c=Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue; if($c){ $c | Select-Object -First 5 -Property LocalAddress,LocalPort,OwningProcess | Format-Table | Out-String } else { 'NO_LISTENER' }"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Check Vite via IPv6",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"try { (Invoke-WebRequest -Uri 'http://[::1]:5173/' -UseBasicParsing -TimeoutSec 3).StatusCode } catch { Write-Output 'NOT_LISTENING' }"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "E2E verify via Vite proxy (IPv6)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$ErrorActionPreference='Stop'; $base='http://[::1]:5173/api'; $loginBody=@{username='admin';password='admin123'}|ConvertTo-Json; $login=Invoke-RestMethod -Method Post -Uri ($base+'/auth/login') -ContentType 'application/json' -Body $loginBody; $headers=@{ Authorization=('Bearer '+$login.access_token) }; $stamp=[DateTimeOffset]::UtcNow.ToUnixTimeSeconds(); $body=@{ nombre=('Bodega VITE Omit '+$stamp); ubicacion='VITE-Test' }|ConvertTo-Json; $created=Invoke-RestMethod -Method Post -Uri ($base+'/bodega') -Headers $headers -ContentType 'application/json' -Body $body; [PSCustomObject]@{ loginUser=$login.user.username; createdId=$created.id_bodega } | Format-List"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "E2E verify via Vite proxy (localhost)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$ErrorActionPreference='Stop'; $base='http://localhost:5173/api'; $loginBody=@{username='admin';password='admin123'}|ConvertTo-Json; $login=Invoke-RestMethod -Method Post -Uri ($base+'/auth/login') -ContentType 'application/json' -Body $loginBody; $headers=@{ Authorization=('Bearer '+$login.access_token) }; $stamp=[DateTimeOffset]::UtcNow.ToUnixTimeSeconds(); $body=@{ nombre=('Bodega VITE Omit '+$stamp); ubicacion='VITE-Test' }|ConvertTo-Json; $created=Invoke-RestMethod -Method Post -Uri ($base+'/bodega') -Headers $headers -ContentType 'application/json' -Body $body; [PSCustomObject]@{ loginUser=$login.user.username; createdId=$created.id_bodega } | Format-List"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "backend:start:dev",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"start:dev"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "check:port3000",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$p=3000; $c=Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue; if($c){\"LISTENING\"} else {\"NOT_LISTENING\"}"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "check:port3000:2",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$p=3000; $c=Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue; if($c){Write-Output 'LISTENING'} else {Write-Output 'NOT_LISTENING'}"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "backend:start",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"start"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "check:port3000:3",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$p=3000; $c=Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue; if($c){Write-Output 'LISTENING'} else {Write-Output 'NOT_LISTENING'}"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "e2e:cycle",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"scripts\\e2e-cycle.ps1"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "e2e:cycle:2",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"scripts\\e2e-cycle.ps1"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "e2e:cycle:3",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"scripts\\e2e-cycle.ps1"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "e2e:cycle:4",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"scripts\\e2e-cycle.ps1"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "kill:port3000",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$p=3000; $conns=Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue; foreach($c in $conns){ Write-Output (\"Stopping PID $($c.OwningProcess) on port $p\"); Stop-Process -Id $c.OwningProcess -Force -ErrorAction SilentlyContinue }; Write-Output 'done'"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "check:port3000:4",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$p=3000; $c=Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue; if($c){Write-Output 'LISTENING'} else {Write-Output 'NOT_LISTENING'}"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "backend:start:2",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"start"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "check:port3000:5",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Start-Sleep -Seconds 1; $p=3000; $c=Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue; if($c){Write-Output 'LISTENING'} else {Write-Output 'NOT_LISTENING'}"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "e2e:cycle:5",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"scripts\\e2e-cycle.ps1"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "frontend:smoke:proxy",
+			"type": "shell",
+			"command": "node",
+			"args": [
+				"C:\\Users\\mayra\\Desktop\\UTE\\SEMESTRE 3\\PROGRAMACION\\PROYECTO INTEGRADOR\\computec-frontend\\scripts\\smoke-proxy.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "check:port5173",
+			"type": "shell",
+			"command": "node",
+			"args": [
+				"scripts/check-port.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

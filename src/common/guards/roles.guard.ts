@@ -3,9 +3,7 @@ import { Reflector } from '@nestjs/core';
 import type { Request } from 'express';
 
 type RequestWithUser = Request & {
-  user?: {
-    rol?: string | null;
-  };
+  user?: { rol?: string | null };
 };
 
 @Injectable()
@@ -13,17 +11,21 @@ export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const roles = this.reflector.get<string[] | undefined>(
+    // ✅ lee roles del método y de la clase
+    const roles = this.reflector.getAllAndOverride<string[] | undefined>(
       'roles',
-      context.getHandler(),
+      [context.getHandler(), context.getClass()],
     );
 
-    if (!roles) return true;
+    if (!roles || roles.length === 0) return true;
 
     const request = context.switchToHttp().getRequest<RequestWithUser>();
-    const userRol = request.user?.rol;
+    const userRolRaw = request.user?.rol;
+
+    const userRol = String(userRolRaw ?? '').trim().toUpperCase();
     if (!userRol) return false;
 
-    return roles.includes(userRol);
+    const allowed = (roles ?? []).map((r) => String(r ?? '').trim().toUpperCase());
+    return allowed.includes(userRol);
   }
 }
