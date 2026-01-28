@@ -33,6 +33,9 @@ export class RutaEntrega {
   @Column({ type: 'uuid', nullable: true })
   id_usuario_encargado: string | null;
 
+  @Column({ type: 'uuid', nullable: true })
+  id_bodega: string | null;
+
   @OneToMany(() => DetalleRuta, (d) => d.ruta, { cascade: true })
   detalles: DetalleRuta[];
 }

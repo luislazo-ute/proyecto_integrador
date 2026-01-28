@@ -1,9 +1,50 @@
-import { IsUUID, IsInt, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsUUID, IsInt, Min, IsOptional, IsString } from 'class-validator';
+
+const emptyToUndefined = ({ value }: { value: unknown }) =>
+  value === '' ? undefined : value;
 
 export class AddDetalleRutaDto {
-  @IsUUID() id_ruta: string;
-  @IsUUID() id_bodega_origen: string;
-  @IsUUID() id_bodega_destino: string;
-  @IsUUID() id_producto: string;
-  @IsInt() @Min(1) cantidad: number;
+  @Transform(emptyToUndefined)
+  @IsUUID()
+  id_ruta: string;
+
+  // Campos de inventario (si se usa detalle con producto)
+  @Transform(emptyToUndefined)
+  @IsOptional()
+  @IsUUID()
+  id_bodega_origen?: string;
+
+  @Transform(emptyToUndefined)
+  @IsOptional()
+  @IsUUID()
+  id_bodega_destino?: string;
+
+  @Transform(emptyToUndefined)
+  @IsOptional()
+  @IsUUID()
+  id_producto?: string;
+
+  @Transform(emptyToUndefined)
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  cantidad?: number;
+
+  // Campos de entrega (UI actual)
+  @Transform(emptyToUndefined)
+  @IsOptional()
+  @IsString()
+  direccion_entrega?: string;
+
+  @Transform(emptyToUndefined)
+  @IsOptional()
+  @IsString()
+  destinatario?: string;
+
+  @Transform(emptyToUndefined)
+  @IsOptional()
+  @IsString()
+  telefono?: string;
 }

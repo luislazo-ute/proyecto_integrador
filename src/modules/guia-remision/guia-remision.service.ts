@@ -52,6 +52,7 @@ export class GuiaRemisionService {
   async create(dto: CreateGuiaDto) {
     const ruta = await this.rutaRepo.findOne({
       where: { id_ruta: dto.id_ruta },
+      relations: ['detalles'],
     });
     if (!ruta) throw new NotFoundException('Ruta no encontrada');
 
@@ -65,20 +66,66 @@ export class GuiaRemisionService {
     });
     if (!conductor) throw new NotFoundException('Conductor no encontrado');
 
+    const detallesRuta = (ruta.detalles ?? []).filter(
+      (d: any) => d?.id_producto && d?.cantidad,
+    );
+
+    const pesoRuta = Math.round(
+      detallesRuta
+        .reduce((acc: number, d: any) => acc + Number(d?.peso_total ?? 0), 0)
+        * 100,
+    ) / 100;
+
+    const capacidad = Number(transporte.capacidad);
+    if (pesoRuta > capacidad) {
+      throw new BadRequestException(
+        `Capacidad insuficiente. Peso de la ruta: ${pesoRuta} kg. Capacidad del transporte: ${capacidad} kg.`,
+      );
+    }
+
     const numero_guia = dto.numero_guia?.trim()
       ? dto.numero_guia.trim()
       : await this.generateNumeroGuia();
 
-    const guia = this.guiaRepo.create({
-      ...dto,
-      numero_guia,
-      ruta,
-      fecha_emision: new Date(),
-      estado: 'emitida',
-      peso_total: 0,
-    });
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    return this.guiaRepo.save(guia);
+    try {
+      const guia = queryRunner.manager.create(GuiaRemision, {
+        ...dto,
+        numero_guia,
+        ruta,
+        fecha_emision: new Date(),
+        estado: 'emitida',
+        peso_total: pesoRuta,
+      });
+
+      const savedGuia = await queryRunner.manager.save(guia);
+
+      // Opcional (pero recomendado): si la ruta ya tiene productos/cantidades,
+      // copiamos esos detalles a la guía para que el peso quede trazable.
+      if (detallesRuta.length) {
+        const detallesGuia = detallesRuta.map((d: any) =>
+          queryRunner.manager.create(DetalleGuiaRemision, {
+            id_guia: savedGuia.id_guia,
+            id_producto: String(d.id_producto),
+            cantidad: Number(d.cantidad),
+            peso_total: Number(d.peso_total ?? 0),
+            observacion: null,
+          }),
+        );
+        await queryRunner.manager.save(detallesGuia);
+      }
+
+      await queryRunner.commitTransaction();
+      return savedGuia;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async addDetalle(dto: AddDetalleGuiaDto) {

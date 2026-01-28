@@ -6,6 +6,7 @@ import { MovimientoInventarioController } from './movimiento-inventario.controll
 
 import { Movimiento } from './entities/movimiento.entity';
 import { MovimientoDetalle } from './entities/movimiento-detalle.entity';
+import { MovimientoInventario } from './entities/movimiento-inventario.entity';
 
 import { StockBodega } from 'src/modules/stock-bodega/entities/stock-bodega.entity';
 import { Producto } from 'src/modules/producto/entities/producto.entity';
@@ -20,6 +21,7 @@ import { MovimientoSeq } from './entities/movimiento_seq.entity';
     TypeOrmModule.forFeature([
       Movimiento,
       MovimientoDetalle,
+      MovimientoInventario,
       MovimientoSeq,
       StockBodega,
       Producto,

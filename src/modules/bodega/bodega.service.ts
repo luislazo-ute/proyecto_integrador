@@ -27,11 +27,24 @@ export class BodegaService {
     return String(raw ?? '').toUpperCase().trim();
   }
 
+  private async resolveUserBodegaId(auth: { userId: string; role: string | null; bodegaId?: string | null }): Promise<string | null> {
+    const role = this.normalizeRole(auth?.role);
+    if (role !== 'BODEGA') return null;
+
+    const fromToken = String(auth?.bodegaId ?? '').trim();
+    if (fromToken) return fromToken;
+
+    if (!auth?.userId) return null;
+    const user = await this.usuarioModel.findOne({ _id: auth.userId }).lean();
+    const fromDb = String((user as any)?.id_bodega ?? '').trim();
+    return fromDb || null;
+  }
+
   private async assertCanReadBodega(auth: { userId: string; role: string | null; bodegaId?: string | null }, id_bodega: string) {
     if (!auth?.userId) throw new ForbiddenException('No autenticado');
     if (this.normalizeRole(auth.role) !== 'BODEGA') return;
 
-    const userBodega = String(auth?.bodegaId ?? '').trim();
+    const userBodega = (await this.resolveUserBodegaId(auth)) ?? '';
     if (!userBodega || userBodega !== id_bodega) {
       throw new ForbiddenException('No puedes consultar otra bodega');
     }
@@ -102,7 +115,7 @@ export class BodegaService {
     let bodegas: Bodega[] = [];
     const role = this.normalizeRole(auth?.role);
     if (role === 'BODEGA') {
-      const id = String(auth?.bodegaId ?? '').trim();
+      const id = (await this.resolveUserBodegaId(auth)) ?? '';
       if (!id) throw new ForbiddenException('El usuario no tiene bodega asignada');
 
       // Para movimientos/kardex el rol BODEGA necesita ver el catálogo de bodegas

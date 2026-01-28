@@ -33,13 +33,13 @@ export class MovimientoInventarioController {
     });
   }
 
-  @Roles('ADMIN', 'BODEGA')
+  @Roles('ADMIN', 'BODEGA', 'LOGISTICA')
   @Get()
   findAll(@Query() filter: FilterMovimientoDto) {
     return this.movimientoService.findAll(filter);
   }
 
-  @Roles('ADMIN', 'BODEGA')
+  @Roles('ADMIN', 'BODEGA', 'LOGISTICA')
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.movimientoService.findOne(id);

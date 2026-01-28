@@ -22,7 +22,7 @@ export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
   // ✅ IMPORTANTE: ANTES que ":id"
-  @Roles('ADMIN', 'BODEGA')
+  @Roles('ADMIN', 'BODEGA', 'LOGISTICA')
   @Get('responsables')
   responsables() {
     return this.usuarioService.listResponsables();

@@ -21,18 +21,30 @@ export class DetalleRuta {
   @Column({ type: 'uuid' })
   id_ruta: string;
 
-  @Column({ type: 'uuid' })
-  id_bodega_origen: string;
+  @Column({ type: 'uuid', nullable: true })
+  id_bodega_origen: string | null;
 
-  @Column({ type: 'uuid' })
-  id_bodega_destino: string;
+  @Column({ type: 'uuid', nullable: true })
+  id_bodega_destino: string | null;
 
-  @Column({ type: 'uuid' })
-  id_producto: string;
+  @Column({ type: 'uuid', nullable: true })
+  id_producto: string | null;
 
-  @Column('int')
-  cantidad: number;
+  @Column('int', { nullable: true })
+  cantidad: number | null;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  peso_total: number; // cantidad * producto.peso
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true, default: 0 })
+  peso_total: number | null; // cantidad * producto.peso
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  direccion_entrega: string | null;
+
+  @Column({ type: 'varchar', length: 120, nullable: true })
+  destinatario: string | null;
+
+  @Column({ type: 'varchar', length: 40, nullable: true })
+  telefono: string | null;
+
+  @Column({ type: 'varchar', length: 30, default: 'pendiente' })
+  estado: string;
 }
