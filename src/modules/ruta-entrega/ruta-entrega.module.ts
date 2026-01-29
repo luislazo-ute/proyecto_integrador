@@ -8,19 +8,19 @@ import { Producto } from '../producto/entities/producto.entity';
 import { Transporte } from '../transporte/entities/transporte.entity';
 import { Conductor } from '../conductor/entities/conductor.entity';
 import { UsuarioModule } from '../usuario/usuario.module';
-
 @Module({
-  imports: [
-    UsuarioModule,
-    TypeOrmModule.forFeature([
-      RutaEntrega,
-      DetalleRuta,
-      Producto,
-      Transporte,
-      Conductor,
-    ]),
-  ],
-  providers: [RutaEntregaService],
-  controllers: [RutaEntregaController],
+    imports: [
+        UsuarioModule,
+        TypeOrmModule.forFeature([
+            RutaEntrega,
+            DetalleRuta,
+            Producto,
+            Transporte,
+            Conductor,
+        ]),
+    ],
+    providers: [RutaEntregaService],
+    controllers: [RutaEntregaController],
 })
-export class RutaEntregaModule {}
+export class RutaEntregaModule {
+}
